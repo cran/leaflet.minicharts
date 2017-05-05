@@ -3,10 +3,6 @@ library(leaflet.minicharts)
 data("eco2mix")
 head(eco2mix)
 
-## ------------------------------------------------------------------------
-data("regions")
-class(regions)
-
 ## ----message=FALSE-------------------------------------------------------
 library(dplyr)
 
@@ -23,16 +19,13 @@ prod2016 <- eco2mix %>%
 
 head(prod2016)
 
-## ----message=FALSE-------------------------------------------------------
+## ----message=FALSE, results='hide'---------------------------------------
 library(leaflet)
 
 tilesURL <- "http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"
 
 basemap <- leaflet(width = "100%", height = "400px") %>%
-  addTiles(tilesURL) %>%
-  addPolygons(data = regions, color = "brown", weight = 1, fillOpacity = 0)
-
-basemap
+  addTiles(tilesURL)
 
 ## ------------------------------------------------------------------------
 colors <- c("#4fc13c", "#cccccc")
@@ -41,14 +34,9 @@ basemap %>%
   addMinicharts(
     prod2016$lng, prod2016$lat,
     type = "pie",
-    data = prod2016[, c("renewable", "non_renewable")], 
+    chartdata = prod2016[, c("renewable", "non_renewable")], 
     colorPalette = colors, 
-    width = 60 * sqrt(prod2016$total) / sqrt(max(prod2016$total))
-  ) %>% 
-  addLegend(
-    "topright",
-    colors = colors, opacity = 1,
-    labels = c("Renewable", "Non renewable")
+    width = 60 * sqrt(prod2016$total) / sqrt(max(prod2016$total)), transitionTime = 0
   )
 
 ## ------------------------------------------------------------------------
@@ -57,73 +45,63 @@ colors <- c("#3093e5", "#fcba50", "#a0d9e8")
 basemap %>%
   addMinicharts(
     prod2016$lng, prod2016$lat,
-    data = renewable2016,
+    chartdata = renewable2016,
     colorPalette = colors,
     width = 45, height = 45
-  ) %>% 
-  addLegend(
-    "topright",
-    colors = colors, opacity = 1,
-    labels = c("Hydraulic", "Solar", "Wind")
   )
 
 ## ------------------------------------------------------------------------
 basemap %>%
   addMinicharts(
     prod2016$lng, prod2016$lat,
-    data = prod2016$load,
+    chartdata = prod2016$load,
     showLabels = TRUE,
     width = 45
   )
 
 ## ------------------------------------------------------------------------
-appdata <- eco2mix %>% filter(area != "France")
-maxValue <- max(appdata[, c("hydraulic", "solar", "wind")])
-appdata <- split(appdata, appdata$month)
+prodRegions <- eco2mix %>% filter(area != "France")
 
-## ----eval=FALSE----------------------------------------------------------
-#  ui <- fluidPage(
-#    sliderInput("monthId", "", 1, length(appdata), value = 1, step = 1, animate = TRUE),
-#    tags$h4(textOutput("month")),
-#    leafletOutput("map")
-#  )
-#  
+## ------------------------------------------------------------------------
+basemap %>% 
+  addMinicharts(
+    prodRegions$lng, prodRegions$lat, 
+    chartdata = prodRegions[, c("hydraulic", "solar", "wind")],
+    time = prodRegions$month,
+    colorPalette = colors,
+    width = 45, height = 45
+  )
+
+## ------------------------------------------------------------------------
+data("eco2mixBalance")
+bal <- eco2mixBalance
+basemap %>%
+  addFlows(
+    bal$lng0, bal$lat0, bal$lng1, bal$lat1,
+    flow = bal$balance,
+    time = bal$month
+  )
+
+## ----eval = FALSE--------------------------------------------------------
 #  server <- function(input, output, session) {
-#    # Display month
-#    output$month <- renderText(names(appdata)[input$monthId])
-#  
-#    # Initialize the map
-#    output$map <- renderLeaflet({
-#      data <- appdata[[1]]
-#  
-#      basemap %>%
-#        addMinicharts(
-#          data$lng, data$lat,
-#          data = data[, c("hydraulic", "solar", "wind")],
-#          maxValues = maxValue,
-#          colorPalette = colors,
-#          width = 45, height = 45,
-#          layerId = data$area
-#        ) %>%
-#        addLegend(
-#          "topright",
-#          colors = colors, opacity = 1,
-#          labels = c("Hydraulic", "Solar", "Wind")
-#        )
-#    })
-#  
-#    # Update minicharts when the slider value changes
-#    observeEvent(input$monthId ,{
-#      data <- appdata[[input$monthId]]
-#  
-#      leafletProxy("map", session) %>%
-#        updateMinicharts(
-#          layerId = data$area,
-#          data = data[, c("hydraulic", "solar", "wind")]
-#        )
-#    })
-#  
+#    # Initialize map
+#    output$mymap <- renderLeaflet(
+#      leaflet() %>% addTiles() %>%
+#        addMinicharts(lon, lat, layerId = uniqueChartIds)
+#    )
 #  }
+
+## ----eval = FALSE--------------------------------------------------------
+#  server <- function(input, output, session) {
+#    # Initialize map
+#    ...
 #  
-#  shinyApp(ui, server)
+#    # Update map
+#    observe({
+#      newdata <- getData(input$myinput)
+#  
+#      leafletProxy("mymap") %>%
+#        updateMinicharts(uniqueChartIds, chartdata = newdata, ...)
+#    })
+#  }
 

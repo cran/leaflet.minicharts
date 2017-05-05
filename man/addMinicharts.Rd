@@ -3,17 +3,29 @@
 \name{addMinicharts}
 \alias{addMinicharts}
 \alias{updateMinicharts}
+\alias{removeMinicharts}
+\alias{clearMinicharts}
 \title{Add or update charts on a leaflet map}
 \usage{
-addMinicharts(map, lng, lat, data = 1, maxValues = NULL, type = "auto",
-  fillColor = NULL, colorPalette = NULL, width = 30, height = 30,
-  opacity = 1, showLabels = FALSE, labelStyle = NULL, labelText = NULL,
-  transitionTime = 750, popup = NULL, layerId = NULL)
+addMinicharts(map, lng, lat, chartdata = 1, time = NULL, maxValues = NULL,
+  type = "auto", fillColor = d3.schemeCategory10[1],
+  colorPalette = d3.schemeCategory10, width = 30, height = 30,
+  opacity = 1, showLabels = FALSE, labelText = NULL, labelMinSize = 8,
+  labelMaxSize = 24, labelStyle = NULL, transitionTime = 750,
+  popup = NULL, layerId = NULL, legend = TRUE,
+  legendPosition = "topright", timeFormat = NULL, initialTime = NULL)
 
-updateMinicharts(map, layerId, data = NULL, maxValues = NULL, type = NULL,
-  fillColor = NULL, colorPalette = NULL, width = NULL, height = NULL,
-  opacity = NULL, showLabels = NULL, labelStyle = NULL,
-  labelText = NULL, transitionTime = NULL, popup = NULL)
+updateMinicharts(map, layerId, chartdata = NULL, time = NULL,
+  maxValues = NULL, type = NULL, fillColor = NULL,
+  colorPalette = d3.schemeCategory10, width = NULL, height = NULL,
+  opacity = NULL, showLabels = NULL, labelText = NULL,
+  labelMinSize = NULL, labelMaxSize = NULL, labelStyle = NULL,
+  transitionTime = NULL, popup = NULL, legend = TRUE,
+  legendPosition = NULL, timeFormat = NULL, initialTime = NULL)
+
+removeMinicharts(map, layerId)
+
+clearMinicharts(map)
 }
 \arguments{
 \item{map}{A leaflet map object created with \code{\link[leaflet]{leaflet}}.}
@@ -22,14 +34,22 @@ updateMinicharts(map, layerId, data = NULL, maxValues = NULL, type = NULL,
 
 \item{lat}{Lattitude where to place the charts.}
 
-\item{data}{A numeric matrix with number of rows equal to the number of
+\item{chartdata}{A numeric matrix with number of rows equal to the number of
 elements in \code{lng} or \code{lat} and number of column equal to the
-number of variables to represent.}
+number of variables to represent. If parameter \code{time} is set, the
+number of rows must be equal to the length of \code{lng} times the number
+of unique time steps in the data.}
+
+\item{time}{A vector with length equal to the number of rows in \code{chartdata}
+and containing either numbers representing time indices or dates or
+datetimes. Each unique value must appear as many times as the others. This
+parameter can be used when one wants to represent the evolution of some
+variables on a map.}
 
 \item{maxValues}{maximal absolute values of the variables to represent.
-It can be a vector with one value per column of \code{data} or a single
+It can be a vector with one value per column of \code{chartdata} or a single
 value. Using a single value enforces charts to use a unique scale for all
-variables. If it is \code{NULL}, the maximum value of \code{data} is used.}
+variables. If it is \code{NULL}, the maximum value of \code{chartdata} is used.}
 
 \item{type}{Type of chart. Possible values are \code{"bar"} for bar charts,
 \code{"pie"} for pie charts, \code{"polar-area"} and \code{"polar-radius"}
@@ -41,7 +61,7 @@ chart will be a single circle, else it is a barchart.}
 \item{fillColor}{Used only if data contains only one column. It is the color
 used to fill the circles.}
 
-\item{colorPalette}{Color palette to use when \code{data} contains more than
+\item{colorPalette}{Color palette to use when \code{chartdata} contains more than
 one column.}
 
 \item{width}{maximal width of the created elements.}
@@ -52,32 +72,54 @@ one column.}
 
 \item{showLabels}{Should values be displayed above chart elements.}
 
+\item{labelText}{character vector containing the text content of the charts.
+Used only if \code{chartdata} contains only one column.}
+
+\item{labelMinSize}{Minimal height of labels in pixels. When there is not
+enough space for labels, they are hidden.}
+
+\item{labelMaxSize}{Maximal height of labels in pixels.}
+
 \item{labelStyle}{Character string containing CSS properties to apply to the
 labels.}
 
-\item{labelText}{character vector containing the text content of the charts.
-Used only if \code{data} contains only one column.}
-
-\item{transitionTime}{duration of the transitions when a property of a chart
-is updated}
+\item{transitionTime}{Duration in milliseconds of the transitions when a
+property of a chart is updated.}
 
 \item{popup}{Content of the popup bind to a given chart. This can be html
 text.}
 
 \item{layerId}{An ID variable. It is mandatoy when one wants to update some
-chart.}
+chart with \code{updateMinicharts}.}
+
+\item{legend}{If TRUE and if data has column names, then a legend is
+automatically added to the map.}
+
+\item{legendPosition}{Where should legend be placed?}
+
+\item{timeFormat}{Character string used to format dates and times when
+argument \code{time} is a \code{Date}, \code{POSIXct} or \code{POSIXlt}
+object. See \code{\link[base]{strptime}} for more information.}
+
+\item{initialTime}{This argument can be used to set the initial time step
+shown when the map is created. It is used only when argument \code{time} is
+set.}
 }
 \value{
-The modified leaflet map object.
+The modified leaflet map object. \code{addMinicharts} add new minicharts to
+the map. \code{updateMinicharts} updates minicharts that have already been
+added to the map. \code{removeMinicharts} removes some specific charts from
+the map and \code{clearMinicharts} removes all charts from the map and
+if necessary the legend that has been automatically created.
 }
 \description{
 these functions add or update minicharts in a leaflet map at given coordinates:
-they can be bar charts, pie charts or polar charts where data is encoded
+they can be bar charts, pie charts or polar charts where chartdata is encoded
 either by area or by radius.
 }
 \examples{
 require(leaflet)
-mymap <- leaflet() \%>\% addTiles() \%>\% addMinicharts(0, 0, data = 1:3, layerId = "c1")
+mymap <- leaflet() \%>\% addTiles() \%>\% addMinicharts(0, 0, chartdata = 1:3, layerId = "c1")
 
 mymap
 mymap \%>\% updateMinicharts("c1", maxValues = 6)
