@@ -12,7 +12,7 @@ addMinicharts(map, lng, lat, chartdata = 1, time = NULL, maxValues = NULL,
   colorPalette = d3.schemeCategory10, width = 30, height = 30,
   opacity = 1, showLabels = FALSE, labelText = NULL, labelMinSize = 8,
   labelMaxSize = 24, labelStyle = NULL, transitionTime = 750,
-  popup = NULL, layerId = NULL, legend = TRUE,
+  popup = popupArgs(), layerId = NULL, legend = TRUE,
   legendPosition = "topright", timeFormat = NULL, initialTime = NULL)
 
 updateMinicharts(map, layerId, chartdata = NULL, time = NULL,
@@ -86,8 +86,7 @@ labels.}
 \item{transitionTime}{Duration in milliseconds of the transitions when a
 property of a chart is updated.}
 
-\item{popup}{Content of the popup bind to a given chart. This can be html
-text.}
+\item{popup}{Options that control popup generation.}
 
 \item{layerId}{An ID variable. It is mandatoy when one wants to update some
 chart with \code{updateMinicharts}.}

@@ -8,9 +8,9 @@
 \title{Add or modify flows on a leaflet map}
 \usage{
 addFlows(map, lng0, lat0, lng1, lat1, color = "blue", flow = 1,
-  opacity = 1, dir = NULL, time = NULL, popup = NULL, layerId = NULL,
-  timeFormat = NULL, initialTime = NULL, maxFlow = max(abs(flow)),
-  minThickness = 1, maxThickness = 20)
+  opacity = 1, dir = NULL, time = NULL, popup = popupArgs(labels =
+  "Flow"), layerId = NULL, timeFormat = NULL, initialTime = NULL,
+  maxFlow = max(abs(flow)), minThickness = 1, maxThickness = 20)
 
 updateFlows(map, layerId, color = NULL, flow = NULL, opacity = NULL,
   dir = NULL, time = NULL, popup = NULL, timeFormat = NULL,
@@ -51,8 +51,7 @@ datetimes. Each unique value must appear as many times as the others. This
 parameter can be used when one wants to represent the evolution of some
 variables on a map.}
 
-\item{popup}{Content of the popup bind to a given chart. This can be html
-text.}
+\item{popup}{Options that control popup generation.}
 
 \item{layerId}{An ID variable. It is mandatoy when one wants to update some
 chart with \code{updateMinicharts}.}

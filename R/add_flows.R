@@ -46,24 +46,21 @@
 #'
 #' @export
 addFlows <- function(map, lng0, lat0, lng1, lat1, color = "blue", flow = 1,
-                     opacity = 1, dir = NULL, time = NULL, popup = NULL, layerId = NULL,
+                     opacity = 1, dir = NULL, time = NULL, popup = popupArgs(labels = "Flow"),
+                     layerId = NULL,
                      timeFormat = NULL, initialTime = NULL, maxFlow = max(abs(flow)),
                      minThickness = 1, maxThickness = 20) {
   if (is.null(time)) time <- 1
-  if (is.null(layerId)) layerId <- sprintf("Flow (%s,%s) -> (%s,%s)", lng0, lat0, lng1, lat1)
-
-  weight <- minThickness + flow / maxFlow * (maxThickness - minThickness)
-
-  if (is.null(dir)) dir <- sign(weight)
-  weight <- pmax(minThickness, abs(weight))
+  if (is.null(layerId)) layerId <- sprintf("_flow (%s,%s) -> (%s,%s)", lng0, lat0, lng1, lat1)
 
   options <- .makeOptions(
     required = list(lng0 = lng0, lat0 = lat0, lng1 = lng1, lat1 = lat1, layerId = layerId, time = time),
-    optional = list(dir = dir, color = color, weight = weight,
-                    opacity = opacity, popup = popup)
+    optional = list(dir = dir, color = color, value = flow, maxValue = maxFlow,
+                    minThickness = minThickness, maxThickness = maxThickness,
+                    opacity = opacity)
   )
 
-  args <- .prepareArgs(options, NULL)
+  args <- .prepareArgs(options, NULL, popup)
 
   timeLabels <- sort(unique(time))
   if (!is.null(timeFormat)) {
@@ -75,7 +72,7 @@ addFlows <- function(map, lng0, lat0, lng1, lat1, color = "blue", flow = 1,
   map$dependencies <- c(map$dependencies, minichartDeps())
 
   invokeMethod(map, data = leaflet::getMapData(map), "addFlows", args$options,
-               timeLabels, initialTime) %>%
+               timeLabels, initialTime, args$popupArgs) %>%
     expandLimits(c(lat0, lat1), c(lng0, lng1))
 }
 
@@ -86,23 +83,17 @@ updateFlows <- function(map, layerId, color = NULL, flow = NULL, opacity = NULL,
                         timeFormat = NULL, initialTime = NULL, maxFlow = NULL,
                         minThickness = 1, maxThickness = 20) {
   if (is.null(time)) time <- 1
-  if (!is.null(flow)) {
-    if (is.null(maxFlow)) maxFlow = max(flow)
-    weight <- minThickness + flow / maxFlow * (maxThickness - minThickness)
-
-    if (is.null(dir)) dir <- sign(weight)
-    weight <- pmax(minThickness, abs(weight))
-  }
 
   options <- .makeOptions(
     required = list(layerId = layerId, time = time),
-    optional = list(dir = dir, color = color, weight = weight,
-                    opacity = opacity, popup = popup)
+    optional = list(dir = dir, color = color, value = flow, maxValue = maxFlow,
+                    minThickness = minThickness, maxThickness = maxThickness,
+                    opacity = opacity)
   )
 
-  args <- .prepareArgs(options, NULL)
+  args <- .prepareArgs(options, NULL, popup)
 
-  if(is.null(weight)) {
+  if(is.null(flow)) {
     timeLabels <- NULL
   } else {
     timeLabels <- sort(unique(time))
@@ -113,7 +104,7 @@ updateFlows <- function(map, layerId, color = NULL, flow = NULL, opacity = NULL,
   }
 
   invokeMethod(map, data = leaflet::getMapData(map), "updateFlows", args$options,
-               I(timeLabels), initialTime)
+               I(timeLabels), initialTime, args$popupArgs)
 }
 
 #' @rdname addFlows

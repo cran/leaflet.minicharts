@@ -1,7 +1,7 @@
 Package: leaflet.minicharts
 Type: Package
 Title: Mini Charts for Interactive Maps
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: c(
     person("Francois", "Guillem", , "francois.guillem@rte-france.com", role = c("aut", "cre")),
     person("Jalal-Edine", "ZAWAM", , "jalal-edine.zawam@rte-france.com", role = "ctb"),
@@ -20,9 +20,9 @@ RoxygenNote: 6.0.1
 Suggests: knitr, rmarkdown, dplyr, shiny
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2017-05-05 13:43:22 UTC; franguil
+Packaged: 2017-05-22 09:08:13 UTC; franguil
 Author: Francois Guillem [aut, cre],
   Jalal-Edine ZAWAM [ctb],
   RTE [cph]
 Repository: CRAN
-Date/Publication: 2017-05-05 17:34:41 UTC
+Date/Publication: 2017-05-22 13:54:52 UTC
