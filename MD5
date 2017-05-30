@@ -1,7 +1,7 @@
-bc3eb4eb5a1d9ab8bc359ce702933a9e *DESCRIPTION
+f038e41e6d80898ea8adedded8fe2737 *DESCRIPTION
 cf47069209a8ee5e05e334b69c3deb13 *LICENSE
 75a28316fc3f49058a0e995eabd121c9 *NAMESPACE
-42dbc26f899a9f5c122881c60d9b9030 *NEWS
+cc0185e767f4700c2b419684b8106ff3 *NEWS
 45e6654534b7f55905fc82ca6f991156 *R/add_flows.R
 e5a0e4ea4fab4b2521576ffdd6b88609 *R/add_minicharts.R
 5e8cf25a9bbea3edbe81474cac6bd519 *R/data-doc.R
@@ -17,7 +17,7 @@ a328a815d4ebe6d0e262d636f8d4bf3c *README.md
 ebfd800fce3bc17368db647eb8f7e90b *data/eco2mixBalance.rda
 beb507aa01796d94667507b2716425b8 *inst/doc/introduction.R
 823d2e0e677bc4a3f96175ca933eb501 *inst/doc/introduction.Rmd
-b14a7b951c94f52ea75fd829a2c2c2ea *inst/doc/introduction.html
+043b821383e437feade0ac8888b9a549 *inst/doc/introduction.html
 84518f462e8bc084193cc6fa72185846 *inst/font-awesome-4.7.0/css/font-awesome.min.css
 b06871f281fee6b241d60582ae9369b9 *inst/font-awesome-4.7.0/fonts/fontawesome-webfont.ttf
 9e6aede474de043ee7fe671f7c22e9f0 *inst/leaflet.minicharts.min.js
