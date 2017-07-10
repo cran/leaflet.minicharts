@@ -1,8 +1,39 @@
-.prepareArgs <- function(options, chartdata, popupArgs,
-                         static = c("layerId", "lat", "lat0", "lat1", "lng", "lng0", "lng1")) {
+#' Prepare arguments before sending them to the javascript program.
+#'
+#' Globally the function reorder data by layerId and time and then it split it
+#' by layerId. It also compute some useful values like labels for legend,
+#' domain of data, number of data columns.
+#'
+#' @param options Object created with .preprocessArgs()
+#' @param chartdata Data to represent with minicharts
+#' @param popupArgs object created with function popupArgs()
+#' @param onChange see addMinicharts()
+#'
+#' @return
+#' A list with the following elements:
+#' - options:   graphical options, split by layerId. Each element contains
+#'     elements "dyn" (data.frame with values that vary with time), "static"
+#'     and "timeSteps" (number of time steps)
+#' - chartdata: numeric matrix split by layerId
+#' - maxValues: maximal value observed in chartdata (NULL if chartdata is NULL)
+#' - ncols: number of columns in chartdata
+#' - popupArgs: List containing additional data to display in popups (or the
+#'      popup HTML) split by layerId
+#' - legendLab: Labels to use in legends
+#' - onChange:  Javascript function that will be executed when charts are
+#'      updated
+#'
+#' @noRd
+#'
+.prepareJSArgs <- function(options, chartdata = NULL, popupArgs = NULL,
+                           onChange = NULL, timeFormat = NULL,
+                           initialTime = NULL)  {
+
+  static <- c("layerId", "lat", "lat0", "lat1", "lng", "lng0", "lng1")
 
   staticOptions <- options$staticOptions
   options <- options$options
+  time <- options$time
 
   correctOrder <- order(options$layerId, options$time)
 
@@ -63,8 +94,9 @@
   # Popup html
   if (!is.null(popupArgs$html)) {
     popupArgs$html <- popupArgs$html[correctOrder] %>%
+      as.character() %>%
       split(options$layerId, drop = TRUE) %>%
-      lapply(I) %>%
+      lapply(.I) %>%
       unname()
   }
 
@@ -100,9 +132,26 @@
 
   # Ensure labels will always be translated as arrays in JSON
   if(!is.null(popupArgs)) {
-    popupArgs$labels <- I(popupArgs$labels)
-    popupArgs$supLabels <- I(popupArgs$supLabels)
+    popupArgs$labels <- .I(popupArgs$labels)
+    popupArgs$supLabels <- .I(popupArgs$supLabels)
   }
+
+  # Prepare onChange argument
+  if (!is.null(onChange)) {
+    onChange <- sprintf("(function(opts, popup, d3){%s})", onChange)
+    onChange <- JS(onChange)
+  }
+
+  # Prepare time labels
+  timeLabels <- sort(unique(time))
+  if (!is.null(timeFormat)) {
+    timeLabels <- format(timeLabels, format = timeFormat)
+    if (!is.null(initialTime)) {
+      initialTime <- format(initialTime, format = timeFormat)
+    }
+  }
+  timeLabels <- as.character(timeLabels)
+  if (!is.null(initialTime)) initialTime <- as.character(initialTime)
 
   list(
     options = options,
@@ -110,6 +159,15 @@
     maxValues = maxValues,
     ncols = ncols,
     popupArgs = popupArgs,
-    legendLab = I(legendLab)
+    legendLab = .I(legendLab),
+    onChange = onChange,
+    timeLabels = .I(timeLabels),
+    initialTime = initialTime
   )
+}
+
+
+.I <- function(x) {
+  if(is.null(x)) x <- list()
+  I(x)
 }

@@ -53,26 +53,21 @@ addFlows <- function(map, lng0, lat0, lng1, lat1, color = "blue", flow = 1,
   if (is.null(time)) time <- 1
   if (is.null(layerId)) layerId <- sprintf("_flow (%s,%s) -> (%s,%s)", lng0, lat0, lng1, lat1)
 
-  options <- .makeOptions(
+  options <- .preprocessArgs(
     required = list(lng0 = lng0, lat0 = lat0, lng1 = lng1, lat1 = lat1, layerId = layerId, time = time),
     optional = list(dir = dir, color = color, value = flow, maxValue = maxFlow,
                     minThickness = minThickness, maxThickness = maxThickness,
                     opacity = opacity)
   )
 
-  args <- .prepareArgs(options, NULL, popup)
-
-  timeLabels <- sort(unique(time))
-  if (!is.null(timeFormat)) {
-    timeLabels <- format(timeLabels, format = timeFormat)
-    if (!is.null(initialTime)) initialTime <- format(initialTime, format = timeFormat)
-  }
+  args <- .prepareJSArgs(options, NULL, popup,
+                         initialTime = initialTime, timeFormat = timeFormat)
 
   # Add minichart and font-awesome to the map dependencies
   map$dependencies <- c(map$dependencies, minichartDeps())
 
   invokeMethod(map, data = leaflet::getMapData(map), "addFlows", args$options,
-               timeLabels, initialTime, args$popupArgs) %>%
+               args$timeLabels, args$initialTime, args$popupArgs) %>%
     expandLimits(c(lat0, lat1), c(lng0, lng1))
 }
 
@@ -84,27 +79,22 @@ updateFlows <- function(map, layerId, color = NULL, flow = NULL, opacity = NULL,
                         minThickness = 1, maxThickness = 20) {
   if (is.null(time)) time <- 1
 
-  options <- .makeOptions(
+  options <- .preprocessArgs(
     required = list(layerId = layerId, time = time),
     optional = list(dir = dir, color = color, value = flow, maxValue = maxFlow,
                     minThickness = minThickness, maxThickness = maxThickness,
                     opacity = opacity)
   )
 
-  args <- .prepareArgs(options, NULL, popup)
+  args <- .prepareJSArgs(options, NULL, popup,
+                         initialTime = initialTime, timeFormat = timeFormat)
 
   if(is.null(flow)) {
-    timeLabels <- NULL
-  } else {
-    timeLabels <- sort(unique(time))
-    if (!is.null(timeFormat)) {
-      timeLabels <- format(timeLabels, format = timeFormat)
-      if (!is.null(initialTime)) initialTime <- format(initialTime, format = timeFormat)
-    }
+    args$timeLabels <- NULL
   }
 
   invokeMethod(map, data = leaflet::getMapData(map), "updateFlows", args$options,
-               I(timeLabels), initialTime, args$popupArgs)
+               args$timeLabels, args$initialTime, args$popupArgs)
 }
 
 #' @rdname addFlows

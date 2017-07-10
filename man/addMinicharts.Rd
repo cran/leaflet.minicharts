@@ -13,7 +13,8 @@ addMinicharts(map, lng, lat, chartdata = 1, time = NULL, maxValues = NULL,
   opacity = 1, showLabels = FALSE, labelText = NULL, labelMinSize = 8,
   labelMaxSize = 24, labelStyle = NULL, transitionTime = 750,
   popup = popupArgs(), layerId = NULL, legend = TRUE,
-  legendPosition = "topright", timeFormat = NULL, initialTime = NULL)
+  legendPosition = "topright", timeFormat = NULL, initialTime = NULL,
+  onChange = NULL)
 
 updateMinicharts(map, layerId, chartdata = NULL, time = NULL,
   maxValues = NULL, type = NULL, fillColor = NULL,
@@ -21,7 +22,8 @@ updateMinicharts(map, layerId, chartdata = NULL, time = NULL,
   opacity = NULL, showLabels = NULL, labelText = NULL,
   labelMinSize = NULL, labelMaxSize = NULL, labelStyle = NULL,
   transitionTime = NULL, popup = NULL, legend = TRUE,
-  legendPosition = NULL, timeFormat = NULL, initialTime = NULL)
+  legendPosition = NULL, timeFormat = NULL, initialTime = NULL,
+  onChange = NULL)
 
 removeMinicharts(map, layerId)
 
@@ -103,6 +105,10 @@ object. See \code{\link[base]{strptime}} for more information.}
 \item{initialTime}{This argument can be used to set the initial time step
 shown when the map is created. It is used only when argument \code{time} is
 set.}
+
+\item{onChange}{(For power users who know javascript) A character string
+containing javascript code that is exexuted each time a chart is updated.
+See the details section to understand why and how to use this parameter.}
 }
 \value{
 The modified leaflet map object. \code{addMinicharts} add new minicharts to
@@ -115,6 +121,50 @@ if necessary the legend that has been automatically created.
 these functions add or update minicharts in a leaflet map at given coordinates:
 they can be bar charts, pie charts or polar charts where chartdata is encoded
 either by area or by radius.
+}
+\details{
+Since version 0.5, the parameter \code{onChange} can be used to execute
+some arbitrary javascript code each time a chart is updated (with
+\code{updateMinicharts()} or when time step changes). A typical use case
+would be to change the color of a polygon added with
+\code{\link[leaflet]{addPolygons}} based on the data of the chart. It is even
+possible to create an invisible chart and use it to manage the color and the
+popup of a polygon. Here is a sample code that do that:
+
+\preformatted{
+  leaflet() \%>\% addTiles() \%>\%
+    addPolygons(data = myPolygons, layerId = myPolygons$myIds) \%>\%
+    addMinicharts(
+      mydata$lon, mydata$lat,
+      time = mydata^time
+      fillColor = mydata$color,
+      layerId = mydata$myIds,
+      width = 0, height = 0,
+      onChange = "
+        var s = this._map.layerManager.getLayer("shape", this.layerId);
+        s.bindPopup(popup);
+        if (opts.fillColor) {
+          d3.select(s._path)
+          .transition()
+          .duration(750)
+          .attr("fill", opts.fillColor);
+        }"
+    )
+
+}
+
+The following objects are available when executing the javascript code:
+\describe{
+  \item{this}{The current minichart object. See
+  \url{https://rte-antares-rpackage.github.io/leaflet.minichart/-_L.Minichart_.html}
+  for more information.
+  }
+  \item{opts}{The current options passed to the current minichart object.}
+  \item{popup}{Popup html.}
+  \item{d3}{The D3 module.}
+}
+
+Here is a toy example
 }
 \examples{
 require(leaflet)
