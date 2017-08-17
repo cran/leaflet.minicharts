@@ -1,7 +1,7 @@
-9bc53f3f63cb02e49b3918d6a39e18d8 *DESCRIPTION
+911e0ae0316916e98e38321d1a9072ce *DESCRIPTION
 cf47069209a8ee5e05e334b69c3deb13 *LICENSE
 c7d2a34bb20fa125dffb8aa602dc6bbc *NAMESPACE
-eab4f063be6501e9721fbe988c856510 *NEWS
+5c1e983740c9261cc11cf144058748a8 *NEWS
 a9377d7ca5762f6031bcded9f0343177 *R/add_flows.R
 f5f3f6d985ba2ab92c57f6c58ab72b2a *R/add_minicharts.R
 5e8cf25a9bbea3edbe81474cac6bd519 *R/data-doc.R
@@ -18,10 +18,10 @@ dc5a9f1794dcd23bd4ca0e5108449204 *build/vignette.rds
 ebfd800fce3bc17368db647eb8f7e90b *data/eco2mixBalance.rda
 beb507aa01796d94667507b2716425b8 *inst/doc/introduction.R
 823d2e0e677bc4a3f96175ca933eb501 *inst/doc/introduction.Rmd
-ae7e2328de70f3a57877778fadb71006 *inst/doc/introduction.html
+249776108815d1f21c8e14e0f4c0a946 *inst/doc/introduction.html
 84518f462e8bc084193cc6fa72185846 *inst/font-awesome-4.7.0/css/font-awesome.min.css
 b06871f281fee6b241d60582ae9369b9 *inst/font-awesome-4.7.0/fonts/fontawesome-webfont.ttf
-11974155834594a92be8ec7eb3331bae *inst/leaflet.minicharts.min.js
+8f61db7a6b607c37c281caeb1e5d14ee *inst/leaflet.minicharts.min.js
 d4bdd5245a5275edcc3cd36291fd8328 *inst/minicharts.css
 fcbaf92e743a9c78d3fcbbeb5f2b20d9 *man/addFlows.Rd
 41abbbe4403fdeb9a67248ff2e34ab41 *man/addMinicharts.Rd
