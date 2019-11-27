@@ -7,15 +7,41 @@
 \alias{clearFlows}
 \title{Add or modify flows on a leaflet map}
 \usage{
-addFlows(map, lng0, lat0, lng1, lat1, color = "blue", flow = 1,
-  opacity = 1, dir = NULL, time = NULL, popup = popupArgs(labels =
-  "Flow"), layerId = NULL, timeFormat = NULL, initialTime = NULL,
-  maxFlow = max(abs(flow)), minThickness = 1, maxThickness = 20)
+addFlows(
+  map,
+  lng0,
+  lat0,
+  lng1,
+  lat1,
+  color = "blue",
+  flow = 1,
+  opacity = 1,
+  dir = NULL,
+  time = NULL,
+  popup = popupArgs(labels = "Flow"),
+  layerId = NULL,
+  timeFormat = NULL,
+  initialTime = NULL,
+  maxFlow = max(abs(flow)),
+  minThickness = 1,
+  maxThickness = 20
+)
 
-updateFlows(map, layerId, color = NULL, flow = NULL, opacity = NULL,
-  dir = NULL, time = NULL, popup = NULL, timeFormat = NULL,
-  initialTime = NULL, maxFlow = NULL, minThickness = 1,
-  maxThickness = 20)
+updateFlows(
+  map,
+  layerId,
+  color = NULL,
+  flow = NULL,
+  opacity = NULL,
+  dir = NULL,
+  time = NULL,
+  popup = NULL,
+  timeFormat = NULL,
+  initialTime = NULL,
+  maxFlow = NULL,
+  minThickness = 1,
+  maxThickness = 20
+)
 
 removeFlows(map, layerId)
 
@@ -26,11 +52,11 @@ clearFlows(map)
 
 \item{lng0}{Longitude of the origin of the flow.}
 
-\item{lat0}{Lattitude of the origin of the flow.}
+\item{lat0}{Latitude of the origin of the flow.}
 
 \item{lng1}{Longitude of the destination of the flow.}
 
-\item{lat1}{Lattitude of the destination of the flow.}
+\item{lat1}{Latitude of the destination of the flow.}
 
 \item{color}{Color of the flow.}
 
@@ -53,7 +79,7 @@ variables on a map.}
 
 \item{popup}{Options that control popup generation.}
 
-\item{layerId}{An ID variable. It is mandatoy when one wants to update some
+\item{layerId}{An ID variable. It is mandatory when one wants to update some
 chart with \code{updateMinicharts}.}
 
 \item{timeFormat}{Character string used to format dates and times when
@@ -87,7 +113,7 @@ require(leaflet)
 leaflet() \%>\% addTiles() \%>\%
   addFlows(0, 0, 1, 1, flow = 10)
 
-# Electric exchanges between France and neighbouring countries
+# Electric exchanges between France and neighboring countries
 data("eco2mixBalance")
 bal <- eco2mixBalance
 leaflet() \%>\% addTiles() \%>\%
