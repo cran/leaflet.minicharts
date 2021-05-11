@@ -5,7 +5,11 @@
 \alias{eco2mix}
 \alias{eco2mixBalance}
 \title{Electric production, consumption and exchanges of France}
-\format{An object of class \code{data.frame} with 686 rows and 22 columns.}
+\format{
+An object of class \code{data.frame} with 686 rows and 22 columns.
+
+An object of class \code{data.frame} with 430 rows and 7 columns.
+}
 \usage{
 eco2mix
 
@@ -25,7 +29,7 @@ exchanges between France and neighbouring countries, in a convenient format
 to represent flows on a map.
 }
 \references{
-\url{http://www.rte-france.com/fr/eco2mix/eco2mix}
+\url{https://www.rte-france.com/eco2mix}
 }
 \author{
 Francois Guillem

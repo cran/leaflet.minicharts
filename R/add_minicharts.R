@@ -61,6 +61,8 @@
 #' @param onChange (For power users who know javascript) A character string
 #'   containing javascript code that is executed each time a chart is updated.
 #'   See the details section to understand why and how to use this parameter.
+#' @param popupOptions Change default popupOptions (ex : autoClose, maxHeight, closeButton ...)
+#' See \code{\link[leaflet]{popupOptions}} for more informations.
 #'
 #' @details
 #' Since version 0.5, the parameter \code{onChange} can be used to execute
@@ -122,6 +124,13 @@
 #' mymap %>% updateMinicharts("c1", maxValues = 6)
 #' mymap %>% updateMinicharts("c1", type="pie")
 #'
+#' # popupOptions
+#' mymap <- leaflet() %>% addTiles() %>%
+#'   addMinicharts(0, 0, chartdata = 1:3, layerId = "c1", popupOptions = list(closeButton = FALSE))
+#'
+#' mymap
+#' mymap %>% updateMinicharts("c1", maxValues = 6, popupOptions = list(closeButton = TRUE))
+#'
 #' @export
 #'
 addMinicharts <- function(map, lng, lat, chartdata = 1, time = NULL, maxValues = NULL, type = "auto",
@@ -132,7 +141,8 @@ addMinicharts <- function(map, lng, lat, chartdata = 1, time = NULL, maxValues =
                           transitionTime = 750,
                           popup = popupArgs(),
                           layerId = NULL, legend = TRUE, legendPosition = "topright",
-                          timeFormat = NULL, initialTime = NULL, onChange = NULL) {
+                          timeFormat = NULL, initialTime = NULL, onChange = NULL,
+                          popupOptions = NULL) {
   # Prepare options
   type <- match.arg(type, c("auto", "bar", "pie", "polar-area", "polar-radius"))
   if (is.null(layerId)) layerId <- sprintf("_minichart (%s,%s)", lng, lat)
@@ -176,7 +186,8 @@ addMinicharts <- function(map, lng, lat, chartdata = 1, time = NULL, maxValues =
 
   map <- invokeMethod(map, data = leaflet::getMapData(map), "addMinicharts",
                       args$options, args$chartdata, maxValues, colorPalette,
-                      args$timeLabels, args$initialTime, args$popupArgs, args$onChange)
+                      args$timeLabels, args$initialTime, args$popupArgs, args$onChange,
+                      popupOptions)
 
   if (legend && length(args$legendLab) > 0 && args$ncol > 1) {
     legendCol <- colorPalette[(seq_len(args$ncols)-1) %% args$ncols + 1]
@@ -196,7 +207,8 @@ updateMinicharts <- function(map, layerId, chartdata = NULL, time = NULL, maxVal
                              labelMaxSize = NULL, labelStyle = NULL,
                              transitionTime = NULL, popup = NULL,
                              legend = TRUE, legendPosition = NULL,
-                             timeFormat = NULL, initialTime = NULL, onChange = NULL) {
+                             timeFormat = NULL, initialTime = NULL, onChange = NULL,
+                             popupOptions = NULL) {
 
   if (!is.null(type)) {
     type <- match.arg(type, c("auto", "bar", "pie", "polar-area", "polar-radius"))
@@ -258,7 +270,8 @@ updateMinicharts <- function(map, layerId, chartdata = NULL, time = NULL, maxVal
   map %>%
     invokeMethod(leaflet::getMapData(map), "updateMinicharts",
                  args$options, args$chartdata, maxValues, colorPalette,
-                 args$timeLabels, args$initialTime, args$popupArgs, args$legendLab, args$onChange)
+                 args$timeLabels, args$initialTime, args$popupArgs,
+                 args$legendLab, args$onChange, popupOptions)
 }
 
 #' @rdname addMinicharts
